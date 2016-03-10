@@ -4,26 +4,47 @@ import java.util.*;
 
 public class Main {
 
+    private static HashSet<seURL> Table = new HashSet<>();
+    private static PriorityQueue<seURL> Queue = new PriorityQueue<>();
+    private static HashMap<String, Integer> Filters = new HashMap<>();
+
     public static void main(String[] args) {
         // Define filters
-        HashMap<String, Integer> filters = new HashMap<>();
-        filters.put(".+", 1);
-        filters.put(".+docs\\..+", 10);
+        addFilter(".+Map.+", +2);
+        addFilter(".+Enum.+", +1);
 
         // Create priority queue and add start URL's
-        PriorityQueue<seURL> Table = new PriorityQueue<>();
-        Table.add(new seURL("http://docs.oracle.com/javase/6/docs/api/java/util/HashMap.html", filters));
-        Table.add(new seURL("http://www.example321.com", filters));
+        addUrl("http://docs.oracle.com/javase/6/docs/api/java/util/HashMap.html", 0);
+        addUrl("http://www.example321.com", 0);
+        addUrl("http://i.ua", 0);
 
-        System.out.println("Filters: " + filters);
-        while ( ! Table.isEmpty() ){     // there are queued seURLS
-            seURL seurl = Table.poll();
-          //System.out.println(seurl.getUrl() + " - prio=" + seurl.getWeight());
-            seurl.Retrieve();
-            ArrayList<String> list = seurl.Parse();
-            for ( String l : list ) {
-                Table.add(new seURL(l, filters));
+        System.out.println("Filters: " + Filters);
+        System.out.println("prio dist  URL   status");
+        while ( ! Queue.isEmpty() ){        // there are queued seURLS
+            seURL su = Queue.poll();        // get obj with highest priority
+            System.out.print("   " + su.getWeight() + "  .." + su.getDistance() + "  " + su.getUrl());
+            if ( su.getWeight() <= 0 ) {
+                System.out.println();
+                continue;
+            }
+            su.Retrieve();
+            System.out.println(" -> " + su.getFileName() + (su.getSaved()?" saved":""));
+            HashSet<String> newUrls = su.Parse();
+            for ( String url : newUrls ) {
+                addUrl(url, su.getDistance()+1);
             }
         }
     }
+
+    public static void addFilter(String s, Integer i) {
+        Main.Filters.put(s, i);
+    }
+
+    public static void addUrl(String Url, int distance) {
+        seURL seurl = new seURL(Url, Filters, distance);
+        boolean added = Table.add(seurl);
+        if (added)              // if added to Table = it is unique url
+            Queue.add(seurl);   // and add it download queue too
+    }
+
 }
