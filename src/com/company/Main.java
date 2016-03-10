@@ -18,7 +18,7 @@ public class Main {
         System.out.println("Filters: " + filters);
         while ( ! Table.isEmpty() ){     // there are queued seURLS
             seURL seurl = Table.poll();
-            System.out.println(seurl.getUrl() + " - prio=" + seurl.getWeight());
+          //System.out.println(seurl.getUrl() + " - prio=" + seurl.getWeight());
             seurl.Retrieve();
             ArrayList<String> list = seurl.Parse();
             for ( String l : list ) {
