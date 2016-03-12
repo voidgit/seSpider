@@ -13,7 +13,7 @@ public class Main {
         addFilter(".+Map.+", +2);
         addFilter(".+Enum.+", +1);
 
-        // Create priority queue and add start URL's
+        // Add start URL's
         addUrl("http://docs.oracle.com/javase/6/docs/api/java/util/HashMap.html", 0);
         addUrl("http://www.example321.com", 0);
         addUrl("http://i.ua", 0);
@@ -42,9 +42,10 @@ public class Main {
 
     public static void addUrl(String Url, int distance) {
         seURL seurl = new seURL(Url, Filters, distance);
+        // TODO decide whether to ignore zero weight URL's here
         boolean added = Table.add(seurl);
         if (added)              // if added to Table = it is unique url
-            Queue.add(seurl);   // and add it download queue too
+            Queue.add(seurl);   // then add it download queue too
     }
 
 }
