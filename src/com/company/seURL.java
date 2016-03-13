@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.channels.*;
 import java.util.regex.*;
 import java.util.*;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,7 +15,7 @@ import org.jsoup.select.Elements;
 /**
  * Created by serhiy on 3/9/16.
  **/
-public class seURL implements Comparable<seURL> {
+class seURL implements Comparable<seURL> {
     // Private block
     private boolean retrieved = false;
     private boolean saved = false;
@@ -52,12 +53,12 @@ public class seURL implements Comparable<seURL> {
         return o.Weight - Weight;
     }
 
-    public boolean Retrieve(){
+    public boolean Retrieve(HashMap<String, String> filters){
         try{
             URL website = new URL(Url);
             try {
                 ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-                FileName = "tmp/" + URLtoFileName(Url);
+                FileName = URLtoFileName(Url, filters);
                 FileOutputStream fos = new FileOutputStream(FileName);
                 if (fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE) > 0) {
                     saved = true;
@@ -124,9 +125,37 @@ public class seURL implements Comparable<seURL> {
     }
 
 
-    private String URLtoFileName(String Url){
-        //String f = Url.split("://")[1];     // TO DO check whether dangerous
-        return Url.split("/")[Url.split("/").length-1];
+    private String URLtoFileName(String Url, HashMap<String, String> filters){
+        for (String f : filters.keySet())
+            Url = Url.replaceAll(f, filters.get(f));
+        //filters.keySet().stream().forEach(f -> Url.replaceAll(f, filters.get(f)));
+
+        if ( Url.split("://").length > 0 )
+            Url = Url.split("://")[1];
+        //System.out.println("\nURL = " + Url);
+
+        String path = "tmp/" + String.join("/", Arrays.copyOfRange(Url.split("/"), 0, Url.split("/").length-1));
+        File p = new File(path);
+        if ( ! p.exists())
+            if (p.mkdirs()){
+                System.out.println("\nCreated path " + path);
+            } else {
+                System.err.println("\nError: could not create path " + path);
+            }
+      /*String[] names = Url.split("/");
+        String path = "tmp/"+names[0];
+        for (int i=1; i<names.length; i++){
+            File p = new File(path);
+            if ( ! p.exists() )
+                if (p.mkdir()){
+                    System.out.println("Created path " + path);
+                } else {
+                    System.err.println("Error: could not create path " + path);
+                }
+            path += "/"+names[i];
+            //System.out.println("Next Path = " + path);
+        }*/
+        return "tmp/" + Url;
     }
 
     public boolean getSaved() {
