@@ -19,3 +19,4 @@ Example:
 
 Also you may specify maximum recursion depth, 0 for infinite.
 Default depth is 3.
+
