@@ -1,0 +1,21 @@
+This is just yet another web spider, which allows you to fetch content you need recursively.
+
+To start you should specify one or more URLs which will be fetched and parsed.
+The URLs fetched from the html files will added to the queue, downloaded, parsed and so on.
+
+You should specify priority filters, each one is an regexp and an integer (either positive or negative).
+These filters will be applied to every URLs parsed from downloaded html files, sum up to priority those
+numbers where regexp matches.
+URLs will be downloaded starting from the highest priority down to 1.
+URLs with priority zero or below will be not downloaded.
+Example of the priority filters:
+    ".+Map.+" ->  +2
+    ".+Enum.+" -> +1
+
+You may specify regexp filters for URL-to-path/filename conversion.
+Example:
+    "docs\.oracle\.com" -> "DOCS"
+    "\?" -> "_"
+
+Also you may specify maximum recursion depth, 0 for infinite.
+Default depth is 3.

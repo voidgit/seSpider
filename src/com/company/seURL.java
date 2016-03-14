@@ -96,6 +96,10 @@ class seURL implements Comparable<seURL> {
         return Weight;
     }
 
+    public void setWeight(int weight) {
+        Weight = weight;
+    }
+
     public HashSet<String> Parse() {
         HashSet<String> list = new HashSet<>();
 

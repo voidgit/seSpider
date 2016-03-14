@@ -1,0 +1,3 @@
+High: Implement multi-thread download
+Med:  Update downloaded html files to point to the downloaded files, not places in the web
+Low:  Sort download queue by priority and distance (if same prio then closer first)
